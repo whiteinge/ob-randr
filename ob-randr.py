@@ -98,9 +98,6 @@ def get_xml():
     root = etree.Element('openbox_pipe_menu')
 
     actions = (
-        ('zoom out', '--scale 1.3x1.3'),
-        ('zoom in', '--panning 1280x1024'),
-        (),
         ('right', '--rotate right'),
         ('left', '--rotate left'),
         ('invert', '--rotate invert'),
