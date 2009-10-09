@@ -105,6 +105,7 @@ def get_xml():
         ('on', '--off'),
         ('off', '--on'),
         (),
+        ('auto', '--auto'),
         ('reset', ' '.join([
             '--auto', '--rotate normal', '--scale 1x1', '--panning 0x0'])))
 
