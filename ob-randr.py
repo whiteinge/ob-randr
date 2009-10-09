@@ -127,10 +127,10 @@ def get_xml():
             text = text.strip()
             output, mode, extra = (lambda x: (x[0], x[1], x[2:]))(text.split(' '))
 
-            node = etree.SubElement(root, 'menu', id=output,
+            node = etree.SubElement(root, 'menu', id=output, type='output',
                     label=' '.join([output, mode, ' '.join(extra)]))
             modes = etree.SubElement(node, 'menu', id='%s-modes' % output,
-                    label='modes')
+                    type='modes', label='modes')
             etree.SubElement(node, 'separator')
 
             # Grab all the available modes (I'm ignoring refresh rates for now)
