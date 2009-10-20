@@ -102,8 +102,8 @@ def get_xml():
         ('left', '--rotate left'),
         ('invert', '--rotate invert'),
         (),
-        ('on', '--off'),
-        ('off', '--on'),
+        ('on', '--on'),
+        ('off', '--off'),
         (),
         ('auto', '--auto'),
         ('reset', ' '.join([
