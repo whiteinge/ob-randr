@@ -103,10 +103,8 @@ def get_xml():
         ('inverted', '--rotate inverted'),
         ('normal', '--rotate normal'),
         (),
-        ('on', '--on'),
-        ('off', '--off'),
-        (),
         ('auto', '--auto'),
+        ('off', '--off'),
         ('reset', ' '.join([
             '--auto', '--rotate normal', '--scale 1x1', '--panning 0x0'])))
 
