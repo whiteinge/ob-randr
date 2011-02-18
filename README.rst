@@ -5,12 +5,12 @@ ob-randr
 Creates an interactive pipe menu for the OpenBox window manager to allow users
 easy access to xrandr information and actions.
 
-.. image:: ob-randr.png
+.. image:: https://github.com/whiteinge/ob-randr/raw/master/ob-randr.png
 
 Installation Instructions
 =========================
 
-1.  Download the script: http://ob-randr.googlecode.com/hg/ob-randr.py
+1.  Download the script: https://github.com/whiteinge/ob-randr/raw/master/ob-randr.py
 2.  Put it somewhere that makes sense::
 
         mv ob-randr.py $HOME/.config/openbox
