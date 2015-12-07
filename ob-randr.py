@@ -33,7 +33,7 @@ scaled-out mode or 'zoom in' to a higher resolution in panning mode.
 
 TODO:
 
-* Add left-of, right-of, above, below, same-as menus for active displays.
+* Invoking position commands on a monitor that is turned off has no effect
 * What other common tasks should be represented?
 
 """
@@ -87,6 +87,19 @@ def get_rc_menu():
 
     return menus
 
+def mk_position_controls(output, name, action, outputs):
+    """A helper function to generate a menu containing set of positional commands (left of, right of, above, below, etc).
+    """
+    menu = etree.Element('menu', id=output+action,
+           type=action, label=name)
+
+    for other in outputs:
+        if output == other:
+            continue
+        menu.append(mk_exe_node(output, other, action + ' ' + other))
+
+    return menu
+
 def get_xml():
     """Run xrandr -q and parse the output for the bits we're interested in,
     then build an XML tree suitable for passing to OpenBox.
@@ -96,6 +109,8 @@ def get_xml():
     xrandr_lines = xrandr.stdout.readlines()
 
     root = etree.Element('openbox_pipe_menu')
+
+    outputs = []
 
     actions = (
         ('right', '--rotate right'),
@@ -132,11 +147,20 @@ def get_xml():
                 # Display is connected but off. Is this the best place to check that?
                 output, mode, extra = text, 'off', ''
 
+            outputs.append(output)
+
             node = etree.SubElement(root, 'menu', id=output, type='output',
                     label=' '.join([output, mode, ' '.join(extra)]))
             modes = etree.SubElement(node, 'menu', id='%s-modes' % output,
                     type='modes', label='modes')
             etree.SubElement(node, 'separator')
+
+            # Add a position menu, but fill in later
+            position = etree.SubElement(node, 'menu', id='%s-position' % output,
+                    type='position', label='position')
+            
+            etree.SubElement(node, 'separator')
+
 
             # Grab all the available modes (I'm ignoring refresh rates for now)
             for j in xrandr_lines[xrandr_lines.index(i) + 1:]:
@@ -169,6 +193,17 @@ def get_xml():
     auto = etree.SubElement(root, 'item', label='auto')
     auto_action = etree.SubElement(auto, 'action', name='execute')
     etree.SubElement(auto_action, 'command').text = 'xrandr --auto'
+
+    # Populate position menus
+    for output in outputs:
+        # Find position entry
+        position = root.find(".//menu[@id=\"%s-position\"]" % output)
+        # Add position options
+        position.append(mk_position_controls(output, 'left of', '--left-of', outputs))
+        position.append(mk_position_controls(output, 'right of', '--right-of', outputs))
+        position.append(mk_position_controls(output, 'above', '--above', outputs))
+        position.append(mk_position_controls(output, 'below', '--below', outputs))
+        position.append(mk_position_controls(output, 'same as', '--same-as', outputs))
 
     for i in get_rc_menu():
         root.append(i)
