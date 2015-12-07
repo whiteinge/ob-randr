@@ -33,7 +33,7 @@ scaled-out mode or 'zoom in' to a higher resolution in panning mode.
 
 TODO:
 
-* Add left-of, right-of, above, below, same-as menus for active displays.
+* Invoking position commands on a monitor that is turned off has no effect
 * What other common tasks should be represented?
 
 """
