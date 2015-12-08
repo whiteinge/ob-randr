@@ -37,8 +37,8 @@ TODO:
 * What other common tasks should be represented?
 
 """
-AUTHOR = 'Seth House <seth@eseth.com>'
-VERSION = '0.1'
+AUTHOR = 'Seth House <seth@eseth.com>, Petr Penzin <penzin.dev@gmail.com>'
+VERSION = '0.2'
 
 import ConfigParser
 import os
@@ -92,11 +92,26 @@ def mk_position_controls(output, name, action, outputs):
     """
     menu = etree.Element('menu', id=output+action,
            type=action, label=name)
+    empty = True
 
-    for other in outputs:
+    # Add --auto to turn the screen on if it is off
+    if outputs[output]:
+        extra_action = ''
+    else:
+        extra_action = '--auto'
+
+    for other in outputs.keys():
+        # Don't position against itself
         if output == other:
             continue
-        menu.append(mk_exe_node(output, other, action + ' ' + other))
+        # Don't position against an output that is off
+        if not outputs[other]:
+            continue
+        menu.append(mk_exe_node(output, other, ' '.join([extra_action, action, other])))
+        empty = False
+
+    if empty:
+        etree.SubElement(menu, 'separator', label="<none>")
 
     return menu
 
@@ -110,7 +125,8 @@ def get_xml():
 
     root = etree.Element('openbox_pipe_menu')
 
-    outputs = []
+    # Dictionary of connected outputs, key - output name, value - is it on
+    outputs = {}
 
     actions = (
         ('right', '--rotate right'),
@@ -142,12 +158,12 @@ def get_xml():
 
             try:
                 output, mode, extra = (lambda x: (x[0], x[1], x[2:]))(text.split(' '))
+                outputs[output] = True
             except IndexError:
                 # LVDS connected (normal left inverted right x axis y axis)
                 # Display is connected but off. Is this the best place to check that?
                 output, mode, extra = text, 'off', ''
-
-            outputs.append(output)
+                outputs[output] = False
 
             node = etree.SubElement(root, 'menu', id=output, type='output',
                     label=' '.join([output, mode, ' '.join(extra)]))
@@ -195,7 +211,7 @@ def get_xml():
     etree.SubElement(auto_action, 'command').text = 'xrandr --auto'
 
     # Populate position menus
-    for output in outputs:
+    for output in outputs.keys():
         # Find position entry
         position = root.find(".//menu[@id=\"%s-position\"]" % output)
         # Add position options
