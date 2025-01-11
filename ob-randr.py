@@ -1,4 +1,4 @@
-#!/usr/bin/env python2
+#!/usr/bin/env python
 # -*- coding: utf-8 -*-
 """A small utility to make xrandr adjustments from an OpenBox menu.
 
@@ -40,7 +40,7 @@ TODO:
 AUTHOR = 'Seth House <seth@eseth.com>, Petr Penzin <penzin.dev@gmail.com>'
 VERSION = '0.2'
 
-import ConfigParser
+from configparser import ConfigParser
 import os
 import subprocess
 import sys
@@ -68,7 +68,7 @@ def mk_exe_node(output, name, command):
 
 def get_rc_menu():
     """Read the user's rc file and return XML for menu entries."""
-    config = ConfigParser.ConfigParser()
+    config = ConfigParser()
     config.read(os.path.join(HOME, RCFILE))
 
     menus = []
@@ -120,7 +120,7 @@ def get_xml():
     then build an XML tree suitable for passing to OpenBox.
 
     """
-    xrandr = subprocess.Popen(['xrandr', '-q'], stdout=subprocess.PIPE)
+    xrandr = subprocess.Popen(['xrandr', '-q'], stdout=subprocess.PIPE, text=True)
     xrandr_lines = xrandr.stdout.readlines()
 
     root = etree.Element('openbox_pipe_menu')
@@ -228,4 +228,4 @@ def get_xml():
 
 if __name__ == '__main__':
     ob_menu = get_xml()
-    sys.stdout.write(etree.tostring(ob_menu) + '\n')
+    sys.stdout.write(etree.tostring(ob_menu, encoding='unicode') + '\n')
